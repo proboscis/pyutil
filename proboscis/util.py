@@ -1,14 +1,14 @@
-from multiprocessing.pool import Pool
+import hashlib
 import multiprocessing
 import os
 import sys
 import zipfile
 from functools import reduce
 from itertools import islice
-import hashlib
+
 import dill
 
-n__author__ = 'kentomasui'
+n__author__ = 'kento masui'
 
 sys.setrecursionlimit(10000000)
 
@@ -101,12 +101,12 @@ def window(seq, n=2):
         yield result
 
 
-def autoClose(filename, param, f):
+def auto_close(filename, param, f):
     with open(filename, param) as F:
         return f(F)
 
 
-def readAppend(filename, f):
+def read_append(filename, f):
     path = os.path.expanduser(filename)
     files = [open(path, p) for p in ['r', 'a']]
     f(files[0], files[1])
@@ -114,7 +114,7 @@ def readAppend(filename, f):
         f.close()
 
 
-def fileLines(file_name):
+def file_lines(file_name):
     """
     open fileName, and generates lines of file.
     :param file_name:
@@ -126,15 +126,15 @@ def fileLines(file_name):
             yield line
 
 
-def fileString(fileName):
+def file_string(fileName):
     """
     :param fileName:
     :return: whole file as a string object
     """
-    return reduce(lambda a, b: a + b, list(fileLines(fileName)))
+    return reduce(lambda a, b: a + b, list(file_lines(fileName)))
 
 
-def zipFileLines(zipName, fileName):
+def zip_file_lines(zipName, fileName):
     """
     :param zipName: zipped file
     :param fileName: file in zipped file
@@ -146,7 +146,7 @@ def zipFileLines(zipName, fileName):
                 yield line
 
 
-def ensurePathExists(fileName):
+def ensure_path_exists(fileName):
     """
     make directory if not present
     :param fileName:
@@ -163,7 +163,7 @@ def exists(filename):
     return path.exists(filename)
 
 
-def fileMemo(f, path):
+def file_memo(f, path):
     """
     convert a function to cache its return value at path
     :param f: src function
@@ -192,7 +192,7 @@ def fileMemo(f, path):
     return l
 
 
-def saveIfNotExist(path, f, force=False):
+def save_if_not_exist(path, f, force=False):
     if exists(path) and not force:
         print("path exists, and performing again: " + path)
         return f()
@@ -203,7 +203,7 @@ def saveIfNotExist(path, f, force=False):
         return data
 
 
-def loadOrCall(path, proc, force=False):
+def load_or_call(path, proc, force=False):
     """
     load cached data from path if present.
     otherwise, proc will be called and saved to path,
@@ -241,8 +241,8 @@ def save(obj, filename: str):
     :param filename:
     :return: filename
     """
-    ensurePathExists(filename)
-    autoClose(filename, 'wb', lambda f: dill.dump(obj, f))
+    ensure_path_exists(filename)
+    auto_close(filename, 'wb', lambda f: dill.dump(obj, f))
 
 
 def save_as_hash(obj, file_dir: None):
@@ -279,7 +279,7 @@ def load(fileName, print_time=True):
     if print_time:
         def l():
             print("loading file:" + fileName)
-            res = autoClose(fileName, 'rb', lambda f: dill.load(f))
+            res = auto_close(fileName, 'rb', lambda f: dill.load(f))
             print("done.")
             return res
 
@@ -287,7 +287,7 @@ def load(fileName, print_time=True):
         print("loading file took {0:.3f} seconds".format(t))
         return res
     else:
-        return autoClose(fileName, 'rb', lambda f: dill.load(f))
+        return auto_close(fileName, 'rb', lambda f: dill.load(f))
 
 
 def check_time(f):
@@ -313,18 +313,6 @@ if __name__ == '__main__':
         print(k, v)
 
 
-def makeImage(data, resolution, tileShape):
-    from utils import tile_raster_images
-    try:
-        import PIL.Image as Image
-    except ImportError:
-        import Image
-    return Image.fromarray(
-        tile_raster_images(X=data,
-                           img_shape=resolution, tile_shape=tileShape,
-                           tile_spacing=(1, 1)))
-
-
 def run_command(command):
     import subprocess
     p = subprocess.Popen(command,
@@ -333,17 +321,14 @@ def run_command(command):
     return iter(p.stdout.readline, b'')
 
 
-def writeFile(path, f):
-    autoClose(path, "w", f)
+def write_file(path, f):
+    auto_close(path, "w", f)
 
-
-def writeFileStr(path, string):
-    autoClose(path, "w", lambda f: f.write(string))
 
 
 def write_file_str(path, string: str):
-    ensurePathExists(path)
-    autoClose(path, "w", lambda f: f.write(string))
+    ensure_path_exists(path)
+    auto_close(path, "w", lambda f: f.write(string))
 
 
 def partition(predicate, seq):
