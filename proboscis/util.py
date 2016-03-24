@@ -1,6 +1,4 @@
 from multiprocessing.pool import Pool
-
-n__author__ = 'kentomasui'
 import multiprocessing
 import os
 import sys
@@ -10,7 +8,10 @@ from itertools import islice
 import hashlib
 import dill
 
+n__author__ = 'kentomasui'
+
 sys.setrecursionlimit(10000000)
+
 
 class infix(object):
     def __init__(self, function):
@@ -232,7 +233,8 @@ def loadOrCall(path, proc, force=False):
         save(data, path)
         return data
 
-def save(obj, filename:str):
+
+def save(obj, filename: str):
     """
     save object at fileName using pickle serializer
     :param obj:
@@ -242,7 +244,8 @@ def save(obj, filename:str):
     ensurePathExists(filename)
     autoClose(filename, 'wb', lambda f: dill.dump(obj, f))
 
-def save_as_hash(obj,file_dir:None):
+
+def save_as_hash(obj, file_dir: None):
     """
     save object as sha1+.pkl using dill.
     you probablly need dill to load this object.
@@ -251,19 +254,21 @@ def save_as_hash(obj,file_dir:None):
     :param file_dir:
     :return: new_name
     """
-    import tempfile,shutil
+    import tempfile, shutil
     with tempfile.NamedTemporaryFile(delete=False) as tmp:
-        dill.dump(obj,tmp)
-        filename = os.path.join(file_dir,tmp.name)
-    new_name = sha1(filename)+".pkl"
+        dill.dump(obj, tmp)
+        filename = os.path.join(file_dir, tmp.name)
+    new_name = sha1(filename) + ".pkl"
     # hope this works with full path
-    shutil.copy(filename,os.path.join(file_dir,new_name))
+    shutil.copy(filename, os.path.join(file_dir, new_name))
     return new_name
+
 
 def sha1(filename):
     with open(filename, "rb") as f:
         data = f.read()
         return hashlib.sha1(data).hexdigest()
+
 
 def load(fileName, print_time=True):
     """
@@ -335,9 +340,11 @@ def writeFile(path, f):
 def writeFileStr(path, string):
     autoClose(path, "w", lambda f: f.write(string))
 
-def write_file_str(path,string:str):
+
+def write_file_str(path, string: str):
     ensurePathExists(path)
-    autoClose(path,"w",lambda f:f.write(string))
+    autoClose(path, "w", lambda f: f.write(string))
+
 
 def partition(predicate, seq):
     """
