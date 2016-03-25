@@ -244,7 +244,7 @@ def save(obj, filename: str):
     auto_close(filename, 'wb', lambda f: dill.dump(obj, f))
 
 
-def save_as_hash(obj, file_dir: None):
+def save_as_hash(obj, file_dir: str):
     """
     save object as sha1+.pkl using dill.
     you probablly need dill to load this object.
@@ -257,9 +257,10 @@ def save_as_hash(obj, file_dir: None):
     with tempfile.NamedTemporaryFile(delete=True) as tmp:
         dill.dump(obj, tmp)
         filename = os.path.join(file_dir, tmp.name)
-    new_name = sha1(filename) + ".pkl"
+        new_name = sha1(filename) + ".pkl"
+    with open(os.path.join(file_dir, new_name),'wb') as f:
+        dill.dump(obj,f)
     # hope this works with full path
-    shutil.copy(filename, os.path.join(file_dir, new_name))
     return new_name
 
 
