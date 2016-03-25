@@ -5,7 +5,6 @@ import sys
 import zipfile
 from functools import reduce
 from itertools import islice
-
 import dill
 
 n__author__ = 'kento masui'
@@ -255,13 +254,39 @@ def save_as_hash(obj, file_dir: None):
     :return: new_name
     """
     import tempfile, shutil
-    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+    with tempfile.NamedTemporaryFile(delete=True) as tmp:
         dill.dump(obj, tmp)
         filename = os.path.join(file_dir, tmp.name)
     new_name = sha1(filename) + ".pkl"
     # hope this works with full path
     shutil.copy(filename, os.path.join(file_dir, new_name))
     return new_name
+
+
+def follow_file(file):
+    """
+    infinitely read lines from file like tail -F.
+    :param file:
+    :return:
+    """
+    import time
+    file.seek(0, 0)
+    while True:
+        line = file.readline()
+        if not line:
+            time.sleep(0.1)
+            continue
+        yield line
+
+
+def follow_lines(filename: str):
+    """
+    yields lines from given file name.
+    :param filename:
+    :return:
+    """
+    with open(filename) as f:
+        yield from follow_file(f)
 
 
 def sha1(filename):
@@ -323,7 +348,6 @@ def run_command(command):
 
 def write_file(path, f):
     auto_close(path, "w", f)
-
 
 
 def write_file_str(path, string: str):
