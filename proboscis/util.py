@@ -2,6 +2,7 @@ import hashlib
 import multiprocessing
 import os
 import sys
+import errno
 import zipfile
 from functools import reduce
 from itertools import islice
@@ -146,16 +147,18 @@ def zip_file_lines(zipName, fileName):
 
 
 def ensure_path_exists(fileName):
-    """
-    make directory if not present
-    :param fileName:
-    :return:None
-    """
     from os import path, makedirs
     parent = os.path.dirname(fileName)
     if not path.exists(parent) and parent:
         makedirs(parent)
-
+"""
+def ensure_path_exists(path):
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
+"""
 
 def exists(filename):
     from os import path
