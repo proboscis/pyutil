@@ -5,4 +5,8 @@ setup(
     description="proboscis's utility library",
     author="Kento Masui",
     author_email="nameissoap@gmail.com",
-    packages=find_packages(include="proboscis"))
+    packages=find_packages(include="proboscis"),
+    install_requires=[
+        "pyprind",
+        "click"
+    ])

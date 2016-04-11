@@ -7,6 +7,7 @@ import zipfile
 from functools import reduce
 from itertools import islice
 import dill
+from collections import Iterable
 
 n__author__ = 'kento masui'
 
@@ -151,6 +152,8 @@ def ensure_path_exists(fileName):
     parent = os.path.dirname(fileName)
     if not path.exists(parent) and parent:
         makedirs(parent)
+
+
 """
 def ensure_path_exists(path):
     try:
@@ -159,6 +162,7 @@ def ensure_path_exists(path):
         if exception.errno != errno.EEXIST:
             raise
 """
+
 
 def exists(filename):
     from os import path
@@ -261,8 +265,8 @@ def save_as_hash(obj, file_dir: str):
         dill.dump(obj, tmp)
         filename = os.path.join(file_dir, tmp.name)
         new_name = sha1(filename) + ".pkl"
-    with open(os.path.join(file_dir, new_name),'wb') as f:
-        dill.dump(obj,f)
+    with open(os.path.join(file_dir, new_name), 'wb') as f:
+        dill.dump(obj, f)
     # hope this works with full path
     return new_name
 
@@ -494,3 +498,26 @@ def ilast(iter):
     for item in iter:
         pass
     return item
+
+
+class PyprindWrapper:
+    def __init__(self, items):
+        from pyprind import prog_bar
+        self.bar = prog_bar(items)
+
+    def __iter__(self):
+        return self.bar
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+
+def progress(items: Iterable):
+    if type(sys.stdout) == "IOStream":
+        return PyprindWrapper(items)
+    else:
+        from click import progressbar
+        return progressbar(items)
