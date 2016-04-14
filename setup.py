@@ -1,6 +1,6 @@
 from setuptools import setup,find_packages
 setup(
-    name="proboscuis_util",
+    name="proboscis_util",
     version="1.0",
     description="proboscis's utility library",
     author="Kento Masui",

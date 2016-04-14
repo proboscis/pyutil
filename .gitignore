@@ -1,2 +1,3 @@
 __pycache__/
 *.iml
+proboscis_util.egg-info/*
