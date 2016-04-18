@@ -1,8 +1,6 @@
 import inspect
 import click
 from click.core import Command
-
-
 class ApplicativeCommand(Command):
     def __init__(self, c: Command):
         super().__init__(
