@@ -23,7 +23,8 @@ class ApplicativeCommand(Command):
     def __add__(self, other):
         return ApplicativeCommand(add_command(self, other, name="added command"))
 
-    #TODO make pipe
+    def __or__(self, other):
+        return ApplicativeCommand(map_command(self, lambda p: other.map(lambda f: f(p))))
 
 
 def add_command(a: Command, b: Command, name=None) -> Command:
