@@ -24,21 +24,8 @@ class ApplicativeCommand(Command):
         return ApplicativeCommand(add_command(self, other, name="added command"))
 
     def __or__(self, other):
-        return ApplicativeCommand(map2_command(self,other,lambda s,f:f(s)))
+        return ApplicativeCommand(map_command(self, lambda p: other.map(lambda f: f(p))))
 
-    def __mul__(self, other):
-        return TupledAC(self.map(lambda a: (a,))) * other
-
-
-class TupledAC(ApplicativeCommand):
-    def map(self, f):
-        return TupledAC(map_command(self, f))
-
-    def __add__(self, other):
-        return TupledAC(add_command(self, other, name="added command"))
-
-    def __mul__(self, other):
-        return TupledAC(map2_command(self, other, lambda a, b: a + (b,)))
         # TODO implement grouping
 
 
