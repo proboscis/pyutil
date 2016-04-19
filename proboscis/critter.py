@@ -1,7 +1,7 @@
 import inspect
 import click
 from click.core import Command
-
+from functional import seq
 
 class ApplicativeCommand(Command):
     def __init__(self, c: Command):
@@ -43,16 +43,7 @@ class TupledAC(ApplicativeCommand):
 
 
 def add_command(a: Command, b: Command, name=None) -> Command:
-    def merged(**kwargs):
-        a_p = extract_params(a.params, a.params + b.params, kwargs)
-        b_p = extract_params(b.params, a.params + b.params, kwargs)
-        return (a.callback(**a_p), b.callback(**b_p))
-
-    return Command(
-        name=name,
-        params=a.params + b.params,
-        callback=merged
-    )
+    return map2_command(a,b,lambda p1,p2:(p1,p2))
 
 
 def map2_command(a: Command, b: Command, f) -> Command:
@@ -63,7 +54,7 @@ def map2_command(a: Command, b: Command, f) -> Command:
 
     return Command(
         name=a.name + b.name,
-        params=a.params + b.params,
+        params=seq(a.params + b.params).distinct_by(lambda a:a.name).sorted(lambda a:a.name).to_list(),
         callback=merged
     )
 

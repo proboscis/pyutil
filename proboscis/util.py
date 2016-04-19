@@ -265,7 +265,9 @@ def save_as_hash(obj, file_dir: str):
         dill.dump(obj, tmp)
         filename = os.path.join(file_dir, tmp.name)
         new_name = sha1(filename) + ".pkl"
-    with open(os.path.join(file_dir, new_name), 'wb') as f:
+    complete_path = os.path.join(file_dir, new_name)
+    ensure_path_exists(complete_path)
+    with open(complete_path, 'wb') as f:
         dill.dump(obj, f)
     # hope this works with full path
     return new_name
