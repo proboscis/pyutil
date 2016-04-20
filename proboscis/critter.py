@@ -3,6 +3,7 @@ import click
 from click.core import Command
 from functional import seq
 
+
 class ApplicativeCommand(Command):
     def __init__(self, c: Command):
         super().__init__(
@@ -24,7 +25,7 @@ class ApplicativeCommand(Command):
         return ApplicativeCommand(add_command(self, other, name="added command"))
 
     def __or__(self, other):
-        return ApplicativeCommand(map2_command(self,other,lambda s,f:f(s)))
+        return ApplicativeCommand(map2_command(self, other, lambda s, f: f(s)))
 
     def __mul__(self, other):
         return TupledAC(self.map(lambda a: (a,))) * other
@@ -32,7 +33,7 @@ class ApplicativeCommand(Command):
 
 class TupledAC(ApplicativeCommand):
     def map(self, f):
-        return TupledAC(map_command(self, f))
+        return TupledAC(map_command(self, lambda a: (f(a),)))
 
     def __add__(self, other):
         return TupledAC(add_command(self, other, name="added command"))
@@ -43,7 +44,7 @@ class TupledAC(ApplicativeCommand):
 
 
 def add_command(a: Command, b: Command, name=None) -> Command:
-    return map2_command(a,b,lambda p1,p2:(p1,p2))
+    return map2_command(a, b, lambda p1, p2: (p1, p2))
 
 
 def map2_command(a: Command, b: Command, f) -> Command:
@@ -54,7 +55,7 @@ def map2_command(a: Command, b: Command, f) -> Command:
 
     return Command(
         name=a.name + b.name,
-        params=seq(a.params + b.params).distinct_by(lambda a:a.name).sorted(lambda a:a.name).to_list(),
+        params=seq(a.params + b.params).distinct_by(lambda a: a.name).sorted(lambda a: a.name).to_list(),
         callback=merged
     )
 
@@ -73,6 +74,11 @@ def extract_params(params: list, whole_params: list, kwargs: dict):
 
 def command(f):
     return ApplicativeCommand(click.command()(f))
+
+
+def commands(*cmds):
+    from functools import reduce
+    return reduce(lambda a, b: a * b, cmds)
 
 
 @command

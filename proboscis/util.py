@@ -239,6 +239,18 @@ def load_or_call(path, proc, force=False):
         save(data, path)
         return data
 
+def save_or_continue(path,proc,force=False):
+    if exists(path) and not force:
+        print("cache file exists, skipping " + path)
+    else:
+        if force:
+            print("forcing to calculate data! =>", path)
+        else:
+            print("cache is not found! recalculating", path)
+        time, data = check_time(proc)
+        print("procedure took {0} seconds.".format(time))
+        print("saved cache: " + path)
+        save(data, path)
 
 def save(obj, filename: str):
     """
