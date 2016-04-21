@@ -33,10 +33,10 @@ class ApplicativeCommand(Command):
 
 class TupledAC(ApplicativeCommand):
     def map(self, f):
-        return TupledAC(map_command(self, lambda a: (f(a),)))
+        return TupledAC(map_command(self,f))
 
     def __add__(self, other):
-        return TupledAC(add_command(self, other, name="added command"))
+        return ApplicativeCommand(add_command(self, other, name="added command"))
 
     def __mul__(self, other):
         return TupledAC(map2_command(self, other, lambda a, b: a + (b,)))
