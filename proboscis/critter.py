@@ -32,13 +32,9 @@ class ApplicativeCommand(Command):
 
 
 class TupledAC(ApplicativeCommand):
-    def map(self, f):
-        return TupledAC(map_command(self,f))
-
-    def __add__(self, other):
-        return ApplicativeCommand(add_command(self, other, name="added command"))
 
     def __mul__(self, other):
+        print("multiplication")
         return TupledAC(map2_command(self, other, lambda a, b: a + (b,)))
         # TODO implement grouping
 
@@ -77,8 +73,13 @@ def command(f):
 
 
 def commands(*cmds):
+    from pprint import pprint
+    pprint("concatenating commands")
+    pprint(cmds)
     from functools import reduce
-    return reduce(lambda a, b: a * b, cmds)
+    AC = ApplicativeCommand
+    empty = AC(Command(name="Empty",callback=lambda :()))
+    return reduce(lambda a,b:AC(map2_command(a,b,lambda p1,p2:p1+(p2,))),(empty,)+cmds)
 
 
 @command
