@@ -6,6 +6,7 @@ from functional import seq
 
 class ApplicativeCommand(Command):
     def __init__(self, c: Command):
+
         super().__init__(
             name=c.name,
             context_settings=c.context_settings,
