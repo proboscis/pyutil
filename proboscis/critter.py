@@ -74,9 +74,6 @@ def command(f):
 
 
 def commands(*cmds):
-    from pprint import pprint
-    pprint("concatenating commands")
-    pprint(cmds)
     from functools import reduce
     AC = ApplicativeCommand
     empty = AC(Command(name="Empty",callback=lambda :()))
